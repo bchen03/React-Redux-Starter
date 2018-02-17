@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
 import {fetchPosts} from '../actions/action-posts';
-
+import {mapPosts} from '../selectors/selector-posts';
 
 export class App extends React.Component {
     constructor(props) {
@@ -56,7 +56,7 @@ export class App extends React.Component {
 // "posts:" is mapped to the component's props, i.e., this.props.posts
 function mapStateToProps(state) {
     return {
-        posts: state.posts
+        posts: mapPosts(state.posts)
     };
 }
 
