@@ -5,58 +5,79 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
 import {fetchPosts} from '../actions/action-posts';
-import {selectPosts} from '../selectors/selector-posts';
+import {postsSelector, top25PostsSelector, top25PostsReSelector} from '../selectors/selector-posts';
 
 export class App extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            top25Posts: false
+        }
+
         this.showPosts = this.showPosts.bind(this);
+        this.getAllPosts = this.getAllPosts.bind(this);
+        this.getTop25Posts = this.getTop25Posts.bind(this);
     }
 
-    showPosts() {
-        if (this.props.posts.isFetching === true) {
+    showPosts(posts) {
+        console.log("showPosts posts: ", posts);
+
+        if (posts.isFetching === true) {
             return <div>Loading posts...</div>;
         } 
-        else if (this.props.posts && this.props.posts.list) {
+        else if (posts.list && posts.list.data) {
             const result = 
-                this.props.posts.list.data
-                .filter((item, index) => index < 25)
-                .map(item => <div key={item.id}>({item.id}): {item.title}</div>);
-    
+                posts.list.data.map(item => 
+                    <div key={item.id}>({item.id}): {item.title}</div>
+                );
+        
             return (
                 <div>
-                    Posts (25 out of 100):
+                    Posts:
                     {result}
                 </div>
             );
-        }
+        }   
+        
         else {
             return null;
         }
+    }
+
+    getAllPosts() {
+        this.props.getPosts();
+        this.setState({ top25Posts: false }); 
+    }
+
+    getTop25Posts() {
+        this.props.getPosts();
+        this.setState({ top25Posts: true }); 
     }
 
     render() {
         return (
             <div>
                 <h1>React Redux Starter Application</h1>
-                <br /><br />
-                <button onClick={() => this.props.getPosts()}>Refresh Posts</button>
-                <br /><br />
-                {this.showPosts()}
-                <br /><br />
+                <p /><p />
+                <button onClick={this.getAllPosts}>Show All Posts</button>&nbsp;&nbsp;
+                <button onClick={this.getTop25Posts}>Show Top 25 Posts</button>
+                <p /><p />
+                { this.state.top25Posts ? this.showPosts(this.props.top25Posts) : this.showPosts(this.props.posts) }
+                <p /><p />
             </div>
         );
     }
 }
 
-// Maps redux state store to this.props
-// "state" parameter is the Redux state object
-// "state.posts": "posts" maps to one of allReducers' key/value state properties
-// "posts:" is mapped to the component's props, i.e., this.props.posts
-function mapStateToProps(state) {
+// Maps Redux state store to this.props
+// "posts:/top25PostsList:" are mapped to the component's props, i.e., this.props.posts, this.props.top25PostsList
+// "postsSelector"/"top25PostsReSelector" are selector functions that convert Redux state to component-specific state
+function mapStateToProps(state, props) {
+    console.log("mapStateToProps state: ", state, ", props: ", props);
     return {
-        posts: selectPosts(state)
+        posts: postsSelector(state),      
+        top25Posts: top25PostsReSelector(state)   
     };
 }
 
@@ -64,7 +85,9 @@ function mapStateToProps(state) {
 // You can now post an action through this.props.getPosts(), or through store.dispatch() (Look at index.js for an example)
 // fetchPosts is an action in action-posts.js
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({getPosts: fetchPosts}, dispatch);
+    return bindActionCreators({
+        getPosts: fetchPosts
+    }, dispatch);
 }
 
 // Connect both functions above to Redux
