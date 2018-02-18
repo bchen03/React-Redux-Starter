@@ -3,7 +3,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from 'react-redux'
-import {createStore, applyMiddleware} from 'redux';
+import {createStore, applyMiddleware, compose} from 'redux';  
 import thunkMiddleware from 'redux-thunk';
 
 import App from "./components/app";
@@ -12,12 +12,19 @@ import {fetchPosts} from './actions/action-posts';
 
 import './css/styles.scss';
 
+// Add support for Redux DevTools extension 
+// Install Redux devtools for your browser first
+// https://github.com/zalmoxisus/redux-devtools-extension#usage
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 // Redux store
 const store = createStore(
-  allReducers,        // top level reducer
-  {},                 // initial state
-  applyMiddleware(     
-      thunkMiddleware
+  allReducers,            // top level reducer
+  {},                     // initial state
+  composeEnhancers(       
+    applyMiddleware(       
+        thunkMiddleware   // redux-thunk for async dispatch
+    )
   )
 );
 

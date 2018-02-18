@@ -1,4 +1,4 @@
 'use strict';
 
-export const mapPosts = state => state
+export const selectPosts = state => state.posts
 

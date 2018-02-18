@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
 import {fetchPosts} from '../actions/action-posts';
-import {mapPosts} from '../selectors/selector-posts';
+import {selectPosts} from '../selectors/selector-posts';
 
 export class App extends React.Component {
     constructor(props) {
@@ -56,19 +56,19 @@ export class App extends React.Component {
 // "posts:" is mapped to the component's props, i.e., this.props.posts
 function mapStateToProps(state) {
     return {
-        posts: mapPosts(state.posts)
+        posts: selectPosts(state)
     };
 }
 
 // Function to dispatch actions from this component 
 // You can now post an action through this.props.getPosts(), or through store.dispatch() (Look at index.js for an example)
 // fetchPosts is an action in action-posts.js
-function matchDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch) {
     return bindActionCreators({getPosts: fetchPosts}, dispatch);
 }
 
 // Connect both functions above to Redux
 // It's important to "export default" the result of connect() so the component is properly hooked up
 // In the top level index.js, here's what the import should look like: import App from './components/app.js'
-export default connect(mapStateToProps, matchDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 
