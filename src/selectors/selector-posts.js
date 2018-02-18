@@ -28,10 +28,8 @@ const filterTop25Posts = posts => {
 };
 
 // Returns first 25 posts using Reselect (memoized selector)
-// This example won't demonstrate what reselect can do since you'll need another component 
-// that doesn't access this portion of the Redux state store to see its benefits
-// Also, the posts are retrieved through an API call and is not affected by reselect; 
-// reselect only memoizes the computed selector data after the reducer runs
+// This example  only demonstrates the syntax for using reselect but is not a good use case
+// Reselect is best used to memoize an expensive computed value in a selector.
 export const top25PostsReSelector = createSelector(
     [postsSelector],
     posts => {
@@ -40,3 +38,7 @@ export const top25PostsReSelector = createSelector(
     }
 )
 
+export const titleSelector = state => { 
+    console.log("titleSelector: ", state.title);
+    return state.title;
+}

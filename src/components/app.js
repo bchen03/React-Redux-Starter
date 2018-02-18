@@ -4,8 +4,8 @@ import React from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import {fetchPosts} from '../actions/action-posts';
-import {postsSelector, top25PostsSelector, top25PostsReSelector} from '../selectors/selector-posts';
+import {fetchPosts, changeTitleColor} from '../actions/action-posts';
+import {postsSelector, top25PostsSelector, top25PostsReSelector, titleSelector} from '../selectors/selector-posts';
 
 export class App extends React.Component {
     constructor(props) {
@@ -58,10 +58,14 @@ export class App extends React.Component {
     render() {
         return (
             <div>
-                <h1>React Redux Starter Application</h1>
+                <h1  style={{color: this.props.title.color}}>React Redux Starter Application</h1>
+                <p /><p />
+                <button onClick={() => this.props.changeTitleColor("red")}>Red title</button>&nbsp;&nbsp;
+                <button onClick={() => this.props.changeTitleColor("yellow")}>Yellow title</button>&nbsp;&nbsp;
+                <button onClick={() => this.props.changeTitleColor("magenta")}>Magenta title</button>&nbsp;&nbsp;
                 <p /><p />
                 <button onClick={this.getAllPosts}>Show All Posts</button>&nbsp;&nbsp;
-                <button onClick={this.getTop25Posts}>Show Top 25 Posts</button>
+                <button onClick={this.getTop25Posts}>Show Top 25 Posts</button>&nbsp;&nbsp;
                 <p /><p />
                 { this.state.top25Posts ? this.showPosts(this.props.top25Posts) : this.showPosts(this.props.posts) }
                 <p /><p />
@@ -77,7 +81,8 @@ function mapStateToProps(state, props) {
     console.log("mapStateToProps state: ", state, ", props: ", props);
     return {
         posts: postsSelector(state),      
-        top25Posts: top25PostsReSelector(state)   
+        top25Posts: top25PostsReSelector(state),
+        title: titleSelector(state)
     };
 }
 
@@ -86,7 +91,8 @@ function mapStateToProps(state, props) {
 // fetchPosts is an action in action-posts.js
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getPosts: fetchPosts
+        getPosts: fetchPosts,
+        changeTitleColor
     }, dispatch);
 }
 
