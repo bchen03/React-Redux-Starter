@@ -5,6 +5,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 var SRC_DIR = path.resolve(__dirname, "src");
 var DIST_DIR = path.resolve(__dirname, "dist");
@@ -21,20 +22,22 @@ var plugins =  [
         },
         hash: true   // Adds hash as query parameter
     }),
-    //   new webpack.ProvidePlugin({
+       new webpack.ProvidePlugin({
+    //     _: 'lodash'
     //     $: 'jquery',
     //     jQuery: 'jquery',
     //     'window.jQuery': 'jquery',
     //     Popper: ['popper.js', 'default']
     //     // In case you imported plugins individually, you must also require them here:
     //     //Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
-    // }),
+     }),
     new ExtractTextPlugin({     // Generate separate .css and remove from bundle.js
         //filename: "styles.[contenthash].css",
         filename: "styles.css",
         disable: false,
         allChunks: true
-    })
+    }),
+    new LodashModuleReplacementPlugin   //({})
 ];
 
 if (isProduction) {
@@ -73,10 +76,10 @@ var config = {
                 loader: "babel-loader",
                 options: {
                     presets: [
-                        // ["react"], 
-                        // ["es2015", { modules: false }],  // Enable tree-shaking
-                        // ["stage-2"] 
-                    ]
+                        //["react"], 
+                        //["es2015", { modules: false }],  // Enable tree-shaking
+                        //["stage-2"] 
+                    ] 
                 }
             },
             { 
