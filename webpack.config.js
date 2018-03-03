@@ -3,9 +3,9 @@
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 var SRC_DIR = path.resolve(__dirname, "src");
 var DIST_DIR = path.resolve(__dirname, "dist");
@@ -37,7 +37,14 @@ var plugins =  [
         disable: false,
         allChunks: true
     }),
-    new LodashModuleReplacementPlugin   //({})
+    new LodashModuleReplacementPlugin,   //({})
+    new webpack.optimize.CommonsChunkPlugin({
+        name: "vendor",
+        filename: isProduction ? "vendor.[chunkhash].js" : "vendor.js",
+        minChunks(module) {
+            return module.context && module.context.indexOf("node_modules") > -1;
+        }
+    })
 ];
 
 if (isProduction) {
@@ -50,10 +57,10 @@ if (isProduction) {
 
 var config = {
     entry: SRC_DIR + "/index.js",
+    devtool: isProduction ? "source-map" : "cheap-eval-source-map",
     output: {
         path: DIST_DIR,
-        //filename: "bundle.[hash].js",
-        filename: "bundle.js"
+        filename: isProduction ? "bundle.[hash].js" : "bundle.js"
         //,publicPath: "/"
     },
     devServer: {
