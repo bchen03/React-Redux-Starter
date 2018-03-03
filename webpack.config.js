@@ -40,7 +40,7 @@ var plugins =  [
     new LodashModuleReplacementPlugin,   //({})
     new webpack.optimize.CommonsChunkPlugin({
         name: "vendor",
-        filename: isProduction ? "vendor.[chunkhash].js" : "vendor.js",
+        filename: isProduction ? "vendor.[hash].js" : "vendor.js",
         minChunks(module) {
             return module.context && module.context.indexOf("node_modules") > -1;
         }
@@ -57,7 +57,7 @@ if (isProduction) {
 
 var config = {
     entry: SRC_DIR + "/index.js",
-    devtool: isProduction ? "source-map" : "cheap-eval-source-map",
+    devtool: isProduction ? "" : "source-map",
     output: {
         path: DIST_DIR,
         filename: isProduction ? "bundle.[hash].js" : "bundle.js"
