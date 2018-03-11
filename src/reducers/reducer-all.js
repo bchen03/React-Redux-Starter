@@ -1,7 +1,9 @@
 'use strict';
 
 import {combineReducers} from 'redux';
-import {postsReducer, posts, title} from './reducer-posts';
+import {postsReducer, posts} from './reducer-posts';
+import {title} from './reducer-title';
+import {paymentTypes} from './reducer-payments';
 
 
 // Top-level Redux store state
@@ -34,5 +36,6 @@ import {postsReducer, posts, title} from './reducer-posts';
 export const allReducers = combineReducers({
     //posts: postsReducer
     posts,          // posts() reducer
-    title           // title() reducer
+    title,           // title() reducer
+    paymentTypes     // paymentTypes() reducer
 });

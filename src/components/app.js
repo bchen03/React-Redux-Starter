@@ -4,11 +4,17 @@ import React from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import {mapProps, withState} from 'recompose';
-import _ from 'lodash';
+import {fetchPosts} from '../actions/action-posts';
+import {changeTitleColor} from '../actions/action-title';
+import {changePaymentType} from '../actions/action-payments';
 
-import {fetchPosts, changeTitleColor} from '../actions/action-posts';
-import {postsSelector, top25PostsSelector, top25PostsReSelector, titleSelector} from '../selectors/selector-posts';
+import {postsSelector, top25PostsSelector, top25PostsReSelector} from '../selectors/selector-posts';
+import {titleSelector} from '../selectors/selector-title';
+import {paymentTypeSelector} from '../selectors/selector-payments';
+
+import {MessageHoc, ColorHoc, PaymentView} from './recompose';
+import {spreadTests} from './es6';
+import {lodashTests} from './lodash';
 
 export class App extends React.Component {
     constructor(props) {
@@ -16,11 +22,16 @@ export class App extends React.Component {
 
         this.state = {
             top25Posts: false
+//            paymentType: "CASH"
         }
 
         this.showPosts = this.showPosts.bind(this);
         this.getAllPosts = this.getAllPosts.bind(this);
         this.getTop25Posts = this.getTop25Posts.bind(this);
+        this.setPayment = this.setPayment.bind(this);
+
+        spreadTests();
+        lodashTests();
     }
 
     showPosts(posts) {
@@ -58,19 +69,31 @@ export class App extends React.Component {
         this.setState({ top25Posts: true }); 
     }
 
+    setPayment(paymentType) {
+        this.props.changePaymentType(paymentType);
+    }
+
     render() {
         return (
             <div>
                 <h1  style={{color: this.props.title.color}}>React Redux Starter Application</h1>
                 <p /><p />
-                <MessageHoc text="Hello World" />
+                MesssageHoc using recompose mapProps: <MessageHoc text="Hello World" />
                 <p /><p />
-                <ColorHoc />
+                ColorHoc using recompose withState: <ColorHoc />
                 <p /><p />
+                PaymentView using recompose compose/branch/renderComponent:
+                <button onClick={() => this.setPayment("CASH")}>Cash</button>&nbsp;&nbsp;
+                <button onClick={() => this.setPayment("VISA")}>VISA</button>&nbsp;&nbsp;
+                <button onClick={() => this.setPayment("MASTERCARD")}>MasterCard</button>&nbsp;&nbsp;
+                <PaymentView paymentType={this.props.paymentType} />
+                <p /><p />
+                Change Title Color using Redux action:
                 <button onClick={() => this.props.changeTitleColor("red")}>Red title</button>&nbsp;&nbsp;
                 <button onClick={() => this.props.changeTitleColor("yellow")}>Yellow title</button>&nbsp;&nbsp;
                 <button onClick={() => this.props.changeTitleColor("magenta")}>Magenta title</button>&nbsp;&nbsp;
                 <p /><p />
+                Get All/Top 25 Posts using Redux action and selectors:
                 <button onClick={this.getAllPosts}>Show All Posts</button>&nbsp;&nbsp;
                 <button onClick={this.getTop25Posts}>Show Top 25 Posts</button>&nbsp;&nbsp;
                 <p /><p />
@@ -89,7 +112,8 @@ function mapStateToProps(state, props) {
     return {
         posts: postsSelector(state),      
         top25Posts: top25PostsReSelector(state),
-        title: titleSelector(state)
+        title: titleSelector(state),
+        paymentType: paymentTypeSelector(state)
     };
 }
 
@@ -99,7 +123,8 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getPosts: fetchPosts,
-        changeTitleColor
+        changeTitleColor,
+        changePaymentType
     }, dispatch);
 }
 
@@ -109,28 +134,3 @@ function mapDispatchToProps(dispatch) {
 export default connect(mapStateToProps, mapDispatchToProps)(App);
 
 
-// Recompose
-// mapProps example - Appends "!!!" to text prop
-const MessageComponent = props => (<div>{ props.text }</div>)
-const MessageHoc = mapProps(props => Object.assign({}, { text: props.text + "!!!" }))(MessageComponent);
-
-// withState - Toggle 'color' boolean prop and display
-// withState injects state/updater function into props - use destructuring here to access props
-const ColorToggle = ({color, setColor}) => {
-    return (
-        <div>
-            <span><button onClick={() => setColor(!color)}>Color me</button></span>
-            <span style={{marginLeft: "10px"}}>{ color === true ? "red" : "black" }</span>
-        </div>
-    );
-};
-
-// 'color' is state, 'setColor' is function to update state, true is initial value
-const ColorHoc = withState('color', 'setColor', true)(ColorToggle);
-
-
-// Lodash
-var flipped = _.flip(function() {
-    return _.toArray(arguments);
-});
-console.log("flipped:", flipped(1,2,3,4,5));
