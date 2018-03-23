@@ -23,7 +23,8 @@ const filterTop25Posts = posts => {
         isFetching: posts.isFetching,
         list: {
             data: posts.list && posts.list.data ? posts.list.data.filter((item, index) => index < 25) : null
-        }
+        },
+        error: posts.error
     };
 };
 

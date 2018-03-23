@@ -10,6 +10,8 @@ import App from "./components/app";
 import {allReducers} from './reducers/reducer-all';
 import {fetchPosts} from './actions/action-posts';
 
+import apiMiddleware from './middleware/middleware-api';
+
 import './css/styles.scss';
 
 // Add support for Redux DevTools extension 
@@ -23,7 +25,8 @@ const store = createStore(
   {},                     // initial state
   composeEnhancers(       
     applyMiddleware(       
-        thunkMiddleware   // redux-thunk for async dispatch
+        thunkMiddleware,   // redux-thunk for async dispatch
+        apiMiddleware
     )
   )
 );

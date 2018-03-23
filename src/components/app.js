@@ -4,7 +4,7 @@ import React from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import {fetchPosts} from '../actions/action-posts';
+import {fetchPosts, getPosts} from '../actions/action-posts';
 import {changeTitleColor} from '../actions/action-title';
 import {changePaymentType} from '../actions/action-payments';
 
@@ -53,7 +53,9 @@ export class App extends React.Component {
                 </div>
             );
         }   
-        
+        else if (posts.error) {
+            return <div style={{ color: "red" }}>An error occurred: {posts.error}</div>;
+        }
         else {
             return null;
         }
@@ -78,7 +80,7 @@ export class App extends React.Component {
             <div>
                 <h1  style={{color: this.props.title.color}}>React Redux Starter Application</h1>
                 <p /><p />
-                MesssageHoc using recompose mapProps: <MessageHoc text="Hello World" />
+                MessageHoc using recompose mapProps: <MessageHoc text="Hello World" />
                 <p /><p />
                 ColorHoc using recompose withState: <ColorHoc />
                 <p /><p />
@@ -122,10 +124,12 @@ function mapStateToProps(state, props) {
 // fetchPosts is an action in action-posts.js
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getPosts: fetchPosts,
+        //getPosts: fetchPosts,
+        getPosts, 
         changeTitleColor,
         changePaymentType
-    }, dispatch);
+    }, 
+    dispatch);
 }
 
 // Connect both functions above to Redux

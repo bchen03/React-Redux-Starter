@@ -39,14 +39,33 @@ export const fetchPosts = () => {
     }
 };
 
-export const requestPosts = () => {
+// Instead of handling async in the action (actions should only say what to do, not how to do it),
+// the action sends the request to postMiddleware which handles the actual API call and invokes the
+// init, success, error callbacks as appropriate. This is a cleaner design making testing easier.
+export const getPosts = () => {
+    console.log('getPosts action called...');
+    return {
+        type: "GET_POSTS",
+        meta: {
+            middlewaretypes: "api",
+        },
+        payload: {
+            url: 'https://jsonplaceholder.typicode.com/posts',
+            init: requestPosts,
+            success: receivePosts,
+            error: errorPosts
+        }
+    };
+}
+
+const requestPosts = () => {
     console.log('requestPosts action called');
     return {
         type: "POSTS_REQUESTED"
     };
 };
 
-export const receivePosts = (json) => {
+const receivePosts = (json) => {
     console.log('receivePosts action called: ', json);
     return {
         type: "POSTS_RECEIVED",
@@ -54,11 +73,11 @@ export const receivePosts = (json) => {
     };
 };
 
-export const changeTitleColor = (color) => {
-    console.log('changeTitleColor action called w/ color: ', color);
+const errorPosts = (err) => {
+    console.log('errorPosts error called: ', err);
     return {
-        type: "CHANGE_TITLE_COLOR",
-        color
-    };
-}
+        type: "POSTS_ERROR",
+        payload: String(err)
+    }
+};
 
