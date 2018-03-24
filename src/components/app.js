@@ -8,7 +8,8 @@ import {fetchPosts, getPosts} from '../actions/action-posts';
 import {changeTitleColor} from '../actions/action-title';
 import {changePaymentType} from '../actions/action-payments';
 
-import {postsSelector, top25PostsSelector, top25PostsReSelector} from '../selectors/selector-posts';
+import {postsSelector, top25PostsSelector} from '../selectors/selector-posts';
+
 import {titleSelector} from '../selectors/selector-title';
 import {paymentTypeSelector} from '../selectors/selector-payments';
 
@@ -25,13 +26,20 @@ export class App extends React.Component {
 //            paymentType: "CASH"
         }
 
-        this.showPosts = this.showPosts.bind(this);
         this.getAllPosts = this.getAllPosts.bind(this);
         this.getTop25Posts = this.getTop25Posts.bind(this);
         this.setPayment = this.setPayment.bind(this);
 
         spreadTests();
         lodashTests();
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log("shouldComponentUpdate currentProps", this.props, 
+                    ", nextProps: ", nextProps, 
+                    ", currentState: ", this.state, 
+                    ", nextState: ", nextState);
+        return true;        
     }
 
     showPosts(posts) {
@@ -41,20 +49,15 @@ export class App extends React.Component {
             return <div>Loading posts...</div>;
         } 
         else if (posts.list && posts.list.data) {
-            const result = 
-                posts.list.data.map(item => 
-                    <div key={item.id}>({item.id}): {item.title}</div>
-                );
-        
             return (
                 <div>
                     Posts:
-                    {result}
+                    { posts.list.data.map(item => <div key={item.id}>({item.id}): {item.title}</div>) }
                 </div>
             );
         }   
         else if (posts.error) {
-            return <div style={{ color: "red" }}>An error occurred: {posts.error}</div>;
+            return <div style={{ color: "red" }}>An error occurred: { posts.error }</div>;
         }
         else {
             return null;
@@ -107,13 +110,14 @@ export class App extends React.Component {
 }
 
 // Maps Redux state store to this.props
-// "posts:/top25PostsList:" are mapped to the component's props, i.e., this.props.posts, this.props.top25PostsList
-// "postsSelector"/"top25PostsReSelector" are selector functions that convert Redux state to component-specific state
+// For posts: allPostsSelector(state):
+//  posts: component can access slice of store data through props, i.e., this.props.posts
+//  allPostsSelector(): selector function that returns a slice of store data for use in component
 function mapStateToProps(state, props) {
     console.log("mapStateToProps state: ", state, ", props: ", props);
     return {
         posts: postsSelector(state),      
-        top25Posts: top25PostsReSelector(state),
+        top25Posts: top25PostsSelector(state),
         title: titleSelector(state),
         paymentType: paymentTypeSelector(state)
     };
