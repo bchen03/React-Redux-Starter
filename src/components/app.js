@@ -7,6 +7,9 @@ import {connect} from 'react-redux';
 import {fetchPosts, changeTitleColor} from '../actions/action-posts';
 import {postsSelector, top25PostsSelector, top25PostsReSelector, titleSelector} from '../selectors/selector-posts';
 
+import { StyleContext, Toolbar } from './context';
+
+
 export class App extends React.Component {
     constructor(props) {
         super(props);
@@ -69,6 +72,9 @@ export class App extends React.Component {
                 <p /><p />
                 { this.state.top25Posts ? this.showPosts(this.props.top25Posts) : this.showPosts(this.props.posts) }
                 <p /><p />
+                <StyleContext.Provider value={{ bgcolor: "cyan" }}>
+                    <Toolbar />
+                </StyleContext.Provider>
             </div>
         );
     }
