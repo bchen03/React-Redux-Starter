@@ -1,5 +1,3 @@
-'use strict';
-
 import React from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -9,26 +7,31 @@ import {changeTitleColor} from '../actions/action-title';
 import {changePaymentType} from '../actions/action-payments';
 
 import {postsSelector, top25PostsSelector} from '../selectors/selector-posts';
-
 import {titleSelector} from '../selectors/selector-title';
 import {paymentTypeSelector} from '../selectors/selector-payments';
+import {persistSelector} from '../selectors/selector-persist';
 
 import {MessageHoc, ColorHoc, PaymentView} from './recompose';
 import {spreadTests} from './es6';
 import {lodashTests} from './lodash';
+
+import {loadSession, saveSession} from '../actions/action-persist';
+
 
 export class App extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            top25Posts: false
+            top25Posts: false,
+            sessionId: ''
 //            paymentType: "CASH"
         }
 
         this.getAllPosts = this.getAllPosts.bind(this);
         this.getTop25Posts = this.getTop25Posts.bind(this);
         this.setPayment = this.setPayment.bind(this);
+        this.loadSession = this.loadSession.bind(this);
 
         spreadTests();
         lodashTests();
@@ -78,10 +81,22 @@ export class App extends React.Component {
         this.props.changePaymentType(paymentType);
     }
 
+    loadSession(event) {
+        console.log("event: ", event.target.value);
+        this.setState({ 
+            sessionId: event.target.value 
+        })
+        this.props.loadSession(event.target.value);
+    }
+
     render() {
         return (
             <div>
-                <h1  style={{color: this.props.title.color}}>React Redux Starter Application</h1>
+                <h1 style={{color: this.props.title.color}}>React Redux Starter Application</h1>
+                <p /><p />
+                <div>Click on PaymentView, Title Color, and Posts buttons below and click "Save New Session", or select a Session Id to load those options:</div>
+                <SessionList sessionId={this.state.sessionId} loadSession={this.loadSession} />&nbsp;&nbsp;
+                <button onClick={() => this.props.saveSession()}>Save New Session</button>&nbsp;&nbsp;
                 <p /><p />
                 MessageHoc using recompose mapProps: <MessageHoc text="Hello World" />
                 <p /><p />
@@ -109,6 +124,19 @@ export class App extends React.Component {
     }
 }
 
+function SessionList(props) {
+    return (
+        <select value={props.sessionId} onChange={props.loadSession}>
+            <option value="">Select a Session Id</option>
+            {
+                Object.keys(sessionStorage).map(id => (
+                    <option key={id} value={id}>{id}</option>
+                ))
+            }
+        </select>
+    );
+}
+
 // Maps Redux state store to this.props
 // For posts: allPostsSelector(state):
 //  posts: component can access slice of store data through props, i.e., this.props.posts
@@ -119,7 +147,8 @@ function mapStateToProps(state, props) {
         posts: postsSelector(state),      
         top25Posts: top25PostsSelector(state),
         title: titleSelector(state),
-        paymentType: paymentTypeSelector(state)
+        paymentType: paymentTypeSelector(state),
+        persist: persistSelector(state)
     };
 }
 
@@ -131,7 +160,9 @@ function mapDispatchToProps(dispatch) {
         //getPosts: fetchPosts,
         getPosts, 
         changeTitleColor,
-        changePaymentType
+        changePaymentType,
+        loadSession,
+        saveSession
     }, 
     dispatch);
 }

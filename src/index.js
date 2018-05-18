@@ -1,5 +1,3 @@
-'use strict';
-
 import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from 'react-redux'
@@ -11,6 +9,7 @@ import {allReducers} from './reducers/reducer-all';
 import {fetchPosts} from './actions/action-posts';
 
 import apiMiddleware from './middleware/middleware-api';
+import persistMiddleware from './middleware/middleware-persist';
 
 import './css/styles.scss';
 
@@ -26,7 +25,8 @@ const store = createStore(
   composeEnhancers(       
     applyMiddleware(       
         thunkMiddleware,   // redux-thunk for async dispatch
-        apiMiddleware
+        apiMiddleware,
+        persistMiddleware
     )
   )
 );

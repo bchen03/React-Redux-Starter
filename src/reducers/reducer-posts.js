@@ -1,4 +1,4 @@
-'use strict';
+import {loadPersist} from './reducer-util';
 
 // Pure function that returns new post state object 
 // Look at allReducers to see how the top-level Redux store state is created
@@ -15,11 +15,18 @@ export function postsReducer(state, action) {
         case "POSTS_ERROR":
             return { ...state, isFetching: false, list: null, error: action.payload };
     }
+
+    //return loadPersist(state, action, "posts");
     return state;
 };
 
 
-export function posts(state={}, action) {
+export function posts(state=defaultState, action) {
     return postsReducer(state, action);
 }
 
+const defaultState = {
+    isFetching: false, 
+    list: null, 
+    error: ""
+};

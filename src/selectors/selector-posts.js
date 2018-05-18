@@ -1,5 +1,3 @@
-'use strict';
-
 import { createSelector } from 'reselect';
 
 // Selectors take Redux store state and create component-specific slices of state

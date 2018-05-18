@@ -1,9 +1,8 @@
-'use strict';
-
 import {combineReducers} from 'redux';
 import {postsReducer, posts} from './reducer-posts';
 import {title} from './reducer-title';
 import {paymentTypes} from './reducer-payments';
+import {persist, persistReducer} from './reducer-persist';
 
 
 // Top-level Redux store state
@@ -33,9 +32,15 @@ import {paymentTypes} from './reducer-payments';
 //     };
 // }
 
-export const allReducers = combineReducers({
-    //posts: postsReducer
+const reducers = combineReducers({
     posts,          // posts() reducer
-    title,           // title() reducer
-    paymentTypes     // paymentTypes() reducer
+    title,          // title() reducer
+    paymentTypes    // paymentTypes() reducer
+    //persist         //
 });
+
+export const allReducers = persistReducer(reducers);
+
+//console.log("==> allReducers: ", allReducers({}, {type: ""}));
+
+

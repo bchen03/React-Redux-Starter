@@ -4,14 +4,14 @@ import axios from 'axios';
 // https://github.com/500tech/middleware-lecture
 
 const apiMiddleware = ({ dispatch, getState }) => next => action => {
+    console.log("apiMiddleware request started, action: ", action, ", state: ", getState());
+
     // Only handle actions with { meta: { middlewaretypes: 'api'} }
     if (skipProcessing(action)) {
         return next(action);
     }
 
     const { url, init, success, error } = action.payload;
-
-    console.log("apiMiddleware request started, url: ", url, ", action: ", action, ", state: ", getState());
 
     dispatch(init());
 
